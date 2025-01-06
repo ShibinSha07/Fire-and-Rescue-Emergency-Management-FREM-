@@ -1,10 +1,16 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import { View, Text, Button, StyleSheet ,Image} from 'react-native';
 
 export default function WelcomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Home Screen</Text>
+      <Image
+        source={require('../assets/images/fire_rescue_logo.jpg')}
+        style={styles.logo}
+      />
+      <Text style={styles.title}>FREM</Text>
+      <Text style={styles.subtitle}>Fire and Rescue Emergency Management</Text>
+
       <Button
         title="Go to Home Screen"
         onPress={() => navigation.navigate('UserHome')}
@@ -14,6 +20,6 @@ export default function WelcomeScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  title: { fontSize: 24, fontWeight: 'bold' },
+  container: { backgroundColor: 'black', flex: 1, justifyContent: 'center', alignItems: 'center' },
+  title: { fontSize: 50, fontWeight: 'bold' ,color: 'white' },
 });

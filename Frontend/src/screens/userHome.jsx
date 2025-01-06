@@ -47,9 +47,12 @@ const App = () => {
                 latitudeDelta: 0.0922,
                 longitudeDelta: 0.0421,
             }}>
-                <Marker coordinate={{ latitude: 12.9716, longitude: 77.5946 }} title="Location 1" />
-                <Marker coordinate={{ latitude: 12.9720, longitude: 77.5950 }} title="Location 2" />
-                <Marker coordinate={{ latitude: 12.9710, longitude: 77.5940 }} title="Location 3" />
+            <TouchableOpacity style={styles.mapButton}>
+                <Text style={styles.emergencyButtonText}>Nearest Fire Stations</Text>
+            </TouchableOpacity> 
+            <TouchableOpacity style={styles.locateButton}>
+                <Text style={styles.emergencyButtonText}>Locate Fire vehicle</Text>
+            </TouchableOpacity>
             </MapView>
         </View>
     );
@@ -63,7 +66,7 @@ const styles = StyleSheet.create({
     header: {
         flexDirection: 'row',
         justifyContent:'center',
-        padding: 20,
+        padding: 80,
     },
     menuButton: {
         marginRight: 20,
@@ -99,6 +102,20 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 18,
         fontWeight: 'bold',
+    },
+    mapButton: {
+        backgroundColor: 'red',
+        paddingVertical: 15,
+        borderRadius: 5,
+        marginHorizontal: 20,
+        marginTop: 150,
+    },
+    locateButton: {
+        backgroundColor: 'red',
+        paddingVertical: 15,
+        borderRadius: 5,
+        marginHorizontal: 20,
+        marginTop: 40,
     },
     aroundYouText: {
         color: 'white',

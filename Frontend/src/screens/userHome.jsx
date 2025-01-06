@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     },
     header: {
         flexDirection: 'row',
-        alignItems: 'center',
+        justifyContent:'center',
         padding: 20,
     },
     menuButton: {
@@ -78,6 +78,8 @@ const styles = StyleSheet.create({
         height: 50,
     },
     title: {
+        flexDirection: 'row',
+        alignItems: 'center',
         fontSize: 24,
         fontWeight: 'bold',
         color: 'white',

@@ -13,7 +13,7 @@ export default function WelcomeScreen({ navigation }) {
 
       <Button
         title="Go to Home Screen"
-        onPress={() => navigation.navigate('UserHome')}
+        onPress={() => navigation.navigate('Login')}
       />
     </View>
   );

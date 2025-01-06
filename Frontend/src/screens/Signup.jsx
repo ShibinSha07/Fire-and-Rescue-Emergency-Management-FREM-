@@ -12,28 +12,30 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 
-export default function LoginPage({ navigation }) {
+export default function SignUpPage({ navigation }) {
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
-    if (email === '' || password === '') {
-      Alert.alert('Error', 'Please fill in all fields.');
+  const handleSignUp = () => {
+    if (username === '' || email === '' || password === '') {
+      Alert.alert('Error', 'Please fill in all the fields.');
+      return;
+    }
+
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      Alert.alert('Error', 'Please enter a valid email address.');
       return;
     }
 
     setLoading(true);
 
-    // Mock validation
+    // Mock sign-up validation
     setTimeout(() => {
       setLoading(false);
-      if (email === 'user@gmail.com' && password === 'password') {
-        Alert.alert('Success', 'Login successful!');
-        navigation.navigate('UserHome');
-      } else {
-        Alert.alert('Error', 'Invalid email or password.');
-      }
+      Alert.alert('Success', 'Account created successfully!');
+      navigation.navigate('Login'); // Replace 'Login' with the actual login screen name
     }, 2000);
   };
 
@@ -44,7 +46,14 @@ export default function LoginPage({ navigation }) {
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <KeyboardAvoidingView behavior="padding" style={styles.container}>
-        <Text style={styles.title}>Login</Text>
+        <Text style={styles.title}>Sign Up</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Username"
+          placeholderTextColor="#888"
+          value={username}
+          onChangeText={setUsername}
+        />
         <TextInput
           style={styles.input}
           placeholder="Email"
@@ -63,20 +72,19 @@ export default function LoginPage({ navigation }) {
         />
         <TouchableOpacity
           style={styles.button}
-          onPress={handleLogin}
+          onPress={handleSignUp}
           disabled={loading}
         >
           {loading ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text style={styles.buttonText}>Login</Text>
+            <Text style={styles.buttonText}>Sign Up</Text>
           )}
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => navigation.navigate('Signup')} // Navigate to SignUpPage
-          style={styles.linkButton}
+          onPress={() => navigation.navigate('Login')} // Replace 'Login' with the login screen name
         >
-          <Text style={styles.linkButtonText}>Don't have an account? Sign Up</Text>
+          <Text style={styles.link}>Already have an account? Log in</Text>
         </TouchableOpacity>
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
@@ -128,10 +136,8 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
   },
-  linkButton: {
+  link: {
     marginTop: 20,
-  },
-  linkButtonText: {
     color: '#007BFF',
     fontSize: 16,
   },

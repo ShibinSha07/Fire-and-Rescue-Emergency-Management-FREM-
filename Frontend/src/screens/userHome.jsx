@@ -1,29 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Button, TouchableOpacity, Image, Platform } from 'react-native';
+import { StyleSheet, Text, View, Button, TouchableOpacity, Image, SafeAreaView } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 
-const App = () => {
+const App = ({ navigation }) => {
     const [location, setLocation] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
 
-    useEffect(() => {
-        (async () => {
+    const handleLocationFetch = async () => {
+        try {
             let { status } = await Location.requestForegroundPermissionsAsync();
             if (status !== 'granted') {
                 setErrorMsg('Permission to access location was denied');
                 return;
             }
 
-            let location = await Location.getCurrentPositionAsync({});
-            setLocation(location);
-        })();
+            let currentLocation = await Location.getCurrentPositionAsync({});
+            setLocation(currentLocation);
+        } catch (error) {
+            console.error('Error fetching location:', error);
+        }
+    };
+
+    useEffect(() => {
+        handleLocationFetch();
     }, []);
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
+            {/* Header Section */}
             <View style={styles.header}>
-                {/* <TouchableOpacity  */}
                 <Image
                     source={require('../assets/images/fire_rescue_logo.jpg')}
                     style={styles.logo}
@@ -31,71 +37,96 @@ const App = () => {
                 <Text style={styles.title}>FREM</Text>
             </View>
 
+            {/* Location Button */}
             <View style={styles.locationButtonContainer}>
-                <Button title="Turn on Location" color="blue" onPress={() => { }} />
+                <Button title="Turn on Location" color="blue" onPress={handleLocationFetch} />
             </View>
 
+            {/* Emergency Call Button */}
             <TouchableOpacity style={styles.emergencyButton}>
                 <Text style={styles.emergencyButtonText}>Emergency Call</Text>
             </TouchableOpacity>
 
-            <Text style={styles.aroundYouText}>Around You</Text>
+            {/* MapView */}
 
-            <MapView style={styles.map} initialRegion={{
-                latitude: location ? location.coords.latitude : 0,
-                longitude: location ? location.coords.longitude : 0,
-                latitudeDelta: 0.0922,
-                longitudeDelta: 0.0421,
-            }}>
-            <TouchableOpacity style={styles.mapButton}>
-                <Text style={styles.emergencyButtonText}>Nearest Fire Stations</Text>
-            </TouchableOpacity> 
-            <TouchableOpacity style={styles.locateButton}>
-                <Text style={styles.emergencyButtonText}>Locate Fire vehicle</Text>
-            </TouchableOpacity>
-            </MapView>
-        </View>
+            <View style={styles.mapContainer}>
+                <MapView
+                    style={styles.map}
+                    initialRegion={{
+                        latitude: location ? location.coords.latitude : 10.5545,
+                        longitude: location ? location.coords.longitude : 76.2247,
+                        latitudeDelta: 0.0922,
+                        longitudeDelta: 0.0421,
+                    }}
+                    region={
+                        location
+                            ? {
+                                latitude: location.coords.latitude,
+                                longitude: location.coords.longitude,
+                                latitudeDelta: 0.01,
+                                longitudeDelta: 0.01,
+                            }
+                            : null
+                    }
+                >
+                    {/* User Location Marker */}
+                    {location && (
+                        <Marker
+                            coordinate={{
+                                latitude: location.coords.latitude,
+                                longitude: location.coords.longitude,
+                            }}
+                            title="Your Location"
+                        />
+                    )}
+                </MapView>
+            </View>
+
+            {/* Action Buttons */}
+            <View style={styles.buttonGroup}>
+                <TouchableOpacity style={styles.mapButton}>
+                    <Text style={styles.emergencyButtonText}>Nearest Fire Stations</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.locateButton} onPress={() => navigation.navigate('Locate')}>
+                    <Text style={styles.emergencyButtonText}>Locate Fire Vehicle</Text>
+                </TouchableOpacity>
+            </View>
+        </SafeAreaView>
     );
-}
+};
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#121212', // Dark background color
+        backgroundColor: '#121212',
     },
     header: {
         flexDirection: 'row',
-        justifyContent:'center',
-        padding: 80,
-    },
-    menuButton: {
-        marginRight: 20,
-    },
-    menuIcon: {
-        width: 24,
-        height: 24,
-        tintColor: 'white',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20,
     },
     logo: {
         width: 50,
         height: 50,
+        marginRight: 10,
     },
     title: {
-        flexDirection: 'row',
-        alignItems: 'center',
         fontSize: 24,
         fontWeight: 'bold',
         color: 'white',
     },
     locationButtonContainer: {
         paddingHorizontal: 20,
+        marginVertical: 10,
     },
     emergencyButton: {
         backgroundColor: 'red',
         paddingVertical: 15,
         borderRadius: 5,
         marginHorizontal: 20,
-        marginTop: 20,
+        marginVertical: 10,
     },
     emergencyButtonText: {
         color: 'white',
@@ -103,28 +134,31 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
     },
-    mapButton: {
-        backgroundColor: 'red',
-        paddingVertical: 15,
-        borderRadius: 5,
-        marginHorizontal: 20,
-        marginTop: 150,
-    },
-    locateButton: {
-        backgroundColor: 'red',
-        paddingVertical: 15,
-        borderRadius: 5,
-        marginHorizontal: 20,
-        marginTop: 40,
-    },
-    aroundYouText: {
-        color: 'white',
-        fontSize: 16,
-        marginTop: 20,
-        marginHorizontal: 20,
+    mapContainer: {
+        flex: 1,
+        height: '50%',
+        marginTop: 150
     },
     map: {
         flex: 1,
+    },
+    buttonGroup: {
+        position: 'absolute',
+        bottom: 20,
+        left: 0,
+        right: 0,
+        paddingHorizontal: 20,
+    },
+    mapButton: {
+        backgroundColor: '#0061FF',
+        paddingVertical: 15,
+        borderRadius: 5,
+        marginBottom: 10,
+    },
+    locateButton: {
+        backgroundColor: 'green',
+        paddingVertical: 15,
+        borderRadius: 5,
     },
 });
 
